@@ -10,37 +10,21 @@ import (
 type board []uint8
 
 
-func parse() (board, error) {
-    var board board = make([]uint8, 0, 81)
-    var i uint8
-    for {
-        if i > 9 {
-            break
-        }
-        var rowStr string
-        if n, _ := fmt.Scanln(&rowStr); n == 0 { // eof
-            break
-        }
-
-        if len(rowStr) != 9 {
-            return nil, errors.New("invalid row length")
-        }
-        for _, v := range rowStr {
-            if v < '0' || v > '9' {
-                return nil, errors.New("invalid char")
-            }
-            board = append(board, uint8(v - '0'))
-        }
-
-        i++
+func parse(str string) (board, error) {
+    if (len(str) != 81) {
+        return nil, errors.New("invalid input length")
     }
-    if i != 9 {
-        return nil, errors.New("invalid number of lines in input")
+    var b board = make([]uint8, 81)
+    for i, v := range str {
+        if v < '0' || v > '9' {
+            return nil, errors.New("invalid char")
+        }
+        b[i] = uint8(v - '0')
     }
-    if !board.valid() {
+    if !b.valid() {
         return nil, errors.New("board not valid")
     }
-    return board, nil
+    return b, nil
 }
 
 func itorc(i uint8) (uint8, uint8) {
@@ -136,6 +120,9 @@ func (b board) backtrack() {
                 return i
             }
             i++
+            if i == 81 {
+                return 81
+            }
         }
     }
     stack := make([]uint8, 81)
@@ -147,9 +134,6 @@ func (b board) backtrack() {
         for try := b[i] + 1; try <= 9; try++ {
             if b.moveValid(i, try) {
                 b[i] = try
-                if i == 80 {
-                    return
-                }
                 foundValidTry = true
                 stack[stackIdx] = i
                 stackIdx++
@@ -158,12 +142,20 @@ func (b board) backtrack() {
         }
         if foundValidTry {
             i = next(i)
+            if i == 81 {
+                return
+            }
         } else {
             b[i] = 0
             stackIdx--
             i = stack[stackIdx]
         }
     }
+}
+
+
+func (b board) solve() {
+    b.backtrack()
 }
 
 
@@ -182,18 +174,17 @@ func (b board) print() {
 
 
 
-
-
-// go build . && cat board.txt | ./sudokusolver
 func main() {
 
-    board, err := parse()
+    var str string
+    fmt.Scanln(&str)
+    board, err := parse(str)
     if err != nil {
         fmt.Println(err.Error())
         return
     }
 
-    board.backtrack()
+    board.solve()
 
     board.print()
 
