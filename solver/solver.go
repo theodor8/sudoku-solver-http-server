@@ -100,8 +100,8 @@ func spliceValid(s []uint8) bool {
 func (b board) valid() bool {
     for i := range uint8(9) {
         if !spliceValid(b.getRow(i)) ||
-        !spliceValid(b.getCol(i)) ||
-        !spliceValid(b.getBox(i)) {
+           !spliceValid(b.getCol(i)) ||
+           !spliceValid(b.getBox(i)) {
             return false
         }
     }
@@ -110,46 +110,39 @@ func (b board) valid() bool {
 
 
 func (b board) backtrack() error {
-    next := func(i uint8) uint8 {
-        for {
-            if b[i] == 0 {
-                return i
-            }
-            i++
-            if i == 81 {
-                return 81
-            }
+    unknowns := make([]uint8, 0, 81) // indices of unknowns
+    for i, v := range b {
+        if v == 0 {
+            unknowns = append(unknowns, uint8(i))
         }
     }
-    stack := make([]uint8, 81)
-    stackIdx := uint8(1)
-    i := next(0)
-    stack[0] = i
+    var ui uint8 = 0
+    var bi uint8 = unknowns[ui]
     for {
         foundValidTry := false
-        for try := b[i] + 1; try <= 9; try++ {
-            if b.moveValid(i, try) {
-                b[i] = try
+        for try := b[bi] + 1; try <= 9; try++ {
+            if b.moveValid(bi, try) {
+                b[bi] = try
                 foundValidTry = true
-                stack[stackIdx] = i
-                stackIdx++
                 break
             }
         }
         if foundValidTry {
-            i = next(i)
-            if i == 81 {
-                return nil
+            ui++
+            if ui >= uint8(len(unknowns)) {
+                break
             }
+            bi = unknowns[ui]
         } else {
-            if stackIdx == 0 {
+            if ui == 0 {
                 return errors.New("unsolvable")
             }
-            b[i] = 0
-            stackIdx--
-            i = stack[stackIdx]
+            b[bi] = 0
+            ui--
+            bi = unknowns[ui]
         }
     }
+    return nil
 }
 
 
@@ -176,6 +169,10 @@ func Solve(boardString string) (string, error) {
     err = board.backtrack()
     if err != nil {
         return "", err
+    }
+
+    if slices.Contains(board, uint8(0)) {
+        return "", errors.New("board not solved after solve (should not happen)")
     }
 
     if !board.valid() {
