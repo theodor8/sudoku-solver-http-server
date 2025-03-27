@@ -109,42 +109,54 @@ func (b board) valid() bool {
 }
 
 
-func (b board) backtrack() error {
+func (b board) backtrack() (uint, error) {
     unknowns := make([]uint8, 0, 81) // indices of unknowns
     for i, v := range b {
         if v == 0 {
             unknowns = append(unknowns, uint8(i))
         }
     }
-    var ui uint8 = 0
-    var bi uint8 = unknowns[ui]
+    var cycles uint = 0
+    var unknownsIndex uint8 = 0
+    var boardIndex uint8 = unknowns[unknownsIndex]
     for {
         foundValidTry := false
-        for try := b[bi] + 1; try <= 9; try++ {
-            if b.moveValid(bi, try) {
-                b[bi] = try
+        for try := b[boardIndex] + 1; try <= 9; try++ {
+            if b.moveValid(boardIndex, try) {
+                b[boardIndex] = try
                 foundValidTry = true
                 break
             }
         }
         if foundValidTry {
-            ui++
-            if ui >= uint8(len(unknowns)) {
+            unknownsIndex++
+            if unknownsIndex >= uint8(len(unknowns)) {
                 break
             }
-            bi = unknowns[ui]
+            boardIndex = unknowns[unknownsIndex]
         } else {
-            if ui == 0 {
-                return errors.New("unsolvable")
+            if unknownsIndex == 0 {
+                return cycles, errors.New("unsolvable")
             }
-            b[bi] = 0
-            ui--
-            bi = unknowns[ui]
+            b[boardIndex] = 0
+            unknownsIndex--
+            boardIndex = unknowns[unknownsIndex]
         }
+        cycles++
     }
-    return nil
+    return cycles, nil
 }
 
+func (b board) StringFormatted() string {
+    var str string
+    for i, v := range b {
+        str += string(v + '0')
+        if i != 0 && i % 8 == 0 {
+            str += "\n"
+        }
+    }
+    return str
+}
 
 func (b board) String() string {
     var str string
@@ -155,30 +167,30 @@ func (b board) String() string {
 }
 
 
-func Solve(boardString string) (string, error) {
+func Solve(boardString string) (string, uint, error) {
 
     board, err := parse(boardString)
     if err != nil {
-        return "", err
+        return "", 0, err
     }
 
     if !board.valid() {
-        return "", errors.New("board not valid")
+        return "", 0, errors.New("board not valid")
     }
 
-    err = board.backtrack()
+    cycles, err := board.backtrack()
     if err != nil {
-        return "", err
+        return "", cycles, err
     }
 
-    if slices.Contains(board, uint8(0)) {
-        return "", errors.New("board not solved after solve (should not happen)")
+    if slices.Contains(board, 0) {
+        return "", cycles, errors.New("board not solved after solve (should not happen)")
     }
 
     if !board.valid() {
-        return "", errors.New("board not valid after solve (should not happen)")
+        return "", cycles, errors.New("board not valid after solve (should not happen)")
     }
 
-    return board.String(), nil
+    return board.String(), cycles, nil
 }
 
