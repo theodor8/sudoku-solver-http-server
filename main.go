@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand/v2"
 	"net"
 	"net/http"
 	"sudokusolver/solver"
@@ -46,6 +47,7 @@ func main() {
 
     router := http.NewServeMux()
 
+    rand := rand.New(rand.NewPCG(uint64(time.Now().UnixNano()), uint64(time.Now().UnixNano())))
 
     router.HandleFunc("/solve/{grid}/", func(w http.ResponseWriter, r *http.Request) {
         solutions, err := solver.Solve(r.PathValue("grid"))
@@ -63,7 +65,7 @@ func main() {
         }
     })
     router.HandleFunc("/gen/", func(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, "not implemented yet")
+        fmt.Fprintf(w, solver.Generate(rand))
     })
     router.HandleFunc("/quit/", func(w http.ResponseWriter, r *http.Request) {
         log.Fatal("quitting")

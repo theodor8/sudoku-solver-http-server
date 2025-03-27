@@ -1,8 +1,10 @@
 package solver
 
 import (
-    "testing"
-    "github.com/stretchr/testify/assert"
+	"math/rand/v2"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 
@@ -66,6 +68,14 @@ func TestSolve(t *testing.T) {
                 input:"003904208000300004006000005020030001460002003008090600080209000095001000000070080",
                 expected:[]string{"153964278872315964946728135729436851461582793538197642387259416695841327214673589"},
             },
+            {
+                input:"479532816352681794861794523218946357597823461634175982725369148986417235143258679",
+                expected:[]string{"479532816352681794861794523218946357597823461634175982725369148986417235143258679"},
+            },
+            {
+                input:"485916372726453981913278654197685423864327195352149867538761249641592738279834516",
+                expected:[]string{"485916372726453981913278654197685423864327195352149867538761249641592738279834516"},
+            },
         }
         for _, test := range tests {
             actual, err := Solve(test.input)
@@ -77,3 +87,18 @@ func TestSolve(t *testing.T) {
         }
     })
 }
+
+func TestGenerate(t *testing.T) {
+    t.Run("Generate", func(t *testing.T) {
+        r := rand.New(rand.NewPCG(1, 2))
+        for range 100 {
+            generated := Generate(r)
+            solutions, err := Solve(generated)
+            assert.NoError(t, err)
+            assert.Equal(t, 1, len(solutions))
+        }
+    })
+}
+
+
+

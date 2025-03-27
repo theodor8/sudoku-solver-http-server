@@ -3,6 +3,7 @@ package solver
 import (
     "errors"
     "slices"
+    "math/rand/v2"
 )
 
 
@@ -116,9 +117,13 @@ func (g grid) backtrack() ([]grid, error) {
             unknowns = append(unknowns, uint8(i))
         }
     }
+    var solutions []grid = make([]grid, 0, 1)
+    if len(unknowns) == 0 {
+        solutions = append(solutions, slices.Clone(g))
+        return solutions, nil
+    }
     var unknownsIndex uint8 = 0
     var gridIndex uint8 = unknowns[unknownsIndex]
-    var solutions []grid = make([]grid, 0, 1)
     for {
         foundValidTry := false
         for try := g[gridIndex] + 1; try <= 9; try++ {
@@ -205,7 +210,29 @@ func IsValid(gridString string) bool {
     return err == nil && grid.valid()
 }
 
-func GenerateGrid() string {
+
+func createValidGrid(rand *rand.Rand) grid {
+    var grid grid = make([]uint8, 81)
+    for {
+        var i uint8 = 0
+        for grid[i] != 0 {
+            i = uint8(rand.Uint() % 9 + 1)
+        }
+        var v uint8 = 1
+        for ; v < 9; v++ {
+            if grid.moveValid(i, v) {
+                break
+            }
+        }
+        if v == 9 {
+            continue
+        }
+        grid[i] = v
+        // TODO
+    }
+}
+
+func Generate(rand *rand.Rand) string {
     return "not implemented yet"
 }
 
