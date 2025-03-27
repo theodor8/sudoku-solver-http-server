@@ -47,12 +47,12 @@ func main() {
     router := http.NewServeMux()
 
     router.HandleFunc("/solve/{board}", func(w http.ResponseWriter, r *http.Request) {
-        solved, err := solver.Solve(r.PathValue("board"))
+        solved, cycles, err := solver.Solve(r.PathValue("board"))
         if err != nil {
             http.Error(w, err.Error(), http.StatusBadRequest)
             return
         }
-        fmt.Fprintf(w, "solved: %v", solved)
+        fmt.Fprintf(w, "solved (%v cycles): %v", cycles, solved)
     })
     router.HandleFunc("/quit", func(w http.ResponseWriter, r *http.Request) {
         log.Fatal("quitting")
