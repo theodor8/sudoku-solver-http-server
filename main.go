@@ -47,7 +47,7 @@ func main() {
     router := http.NewServeMux()
 
 
-    router.HandleFunc("/solve/{grid}", func(w http.ResponseWriter, r *http.Request) {
+    router.HandleFunc("/solve/{grid}/", func(w http.ResponseWriter, r *http.Request) {
         solved, cycles, err := solver.Solve(r.PathValue("grid"))
         if err != nil {
             http.Error(w, err.Error(), http.StatusBadRequest)
@@ -55,14 +55,17 @@ func main() {
         }
         fmt.Fprintf(w, "solved (%v cycles): %v", cycles, solved)
     })
-    router.HandleFunc("/valid/{grid}", func(w http.ResponseWriter, r *http.Request) {
+    router.HandleFunc("/valid/{grid}/", func(w http.ResponseWriter, r *http.Request) {
         if solver.IsValid(r.PathValue("grid")) {
             fmt.Fprintf(w, "valid")
         } else {
             fmt.Fprintf(w, "not valid")
         }
     })
-    router.HandleFunc("/quit", func(w http.ResponseWriter, r *http.Request) {
+    router.HandleFunc("/gen/", func(w http.ResponseWriter, r *http.Request) {
+        fmt.Fprintf(w, "not implemented yet")
+    })
+    router.HandleFunc("/quit/", func(w http.ResponseWriter, r *http.Request) {
         log.Fatal("quitting")
     })
 

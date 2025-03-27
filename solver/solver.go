@@ -199,3 +199,7 @@ func IsValid(gridString string) bool {
     return err == nil && grid.valid()
 }
 
+func GenerateGrid() string {
+    return "not implemented yet"
+}
+
