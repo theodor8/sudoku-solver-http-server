@@ -147,7 +147,7 @@ func (b board) backtrack() (uint, error) {
     return cycles, nil
 }
 
-func (b board) StringFormatted() string {
+func (b board) stringFormatted() string {
     var str string
     for i, v := range b {
         str += string(v + '0')
@@ -158,7 +158,7 @@ func (b board) StringFormatted() string {
     return str
 }
 
-func (b board) String() string {
+func (b board) string() string {
     var str string
     for _, v := range b {
         str += string(v + '0')
@@ -191,6 +191,11 @@ func Solve(boardString string) (string, uint, error) {
         return "", cycles, errors.New("board not valid after solve (should not happen)")
     }
 
-    return board.String(), cycles, nil
+    return board.string(), cycles, nil
+}
+
+func IsValid(boardString string) bool {
+    board, err := parse(boardString)
+    return err == nil && board.valid()
 }
 

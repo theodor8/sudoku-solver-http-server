@@ -46,6 +46,7 @@ func main() {
 
     router := http.NewServeMux()
 
+
     router.HandleFunc("/solve/{board}", func(w http.ResponseWriter, r *http.Request) {
         solved, cycles, err := solver.Solve(r.PathValue("board"))
         if err != nil {
@@ -54,9 +55,17 @@ func main() {
         }
         fmt.Fprintf(w, "solved (%v cycles): %v", cycles, solved)
     })
+    router.HandleFunc("/valid/{board}", func(w http.ResponseWriter, r *http.Request) {
+        if solver.IsValid(r.PathValue("board")) {
+            fmt.Fprintf(w, "valid")
+        } else {
+            fmt.Fprintf(w, "not valid")
+        }
+    })
     router.HandleFunc("/quit", func(w http.ResponseWriter, r *http.Request) {
         log.Fatal("quitting")
     })
+
 
     server := http.Server{
         Addr: ":8080",
