@@ -13,14 +13,14 @@ func parse(str string) (grid, error) {
     if (len(str) != 81) {
         return nil, errors.New("invalid input length")
     }
-    var b grid = make([]uint8, 81)
+    var g grid = make([]uint8, 81)
     for i, v := range str {
         if v < '0' || v > '9' {
             return nil, errors.New("invalid char")
         }
-        b[i] = uint8(v - '0')
+        g[i] = uint8(v - '0')
     }
-    return b, nil
+    return g, nil
 }
 
 func itorc(i uint8) (uint8, uint8) {
@@ -46,9 +46,9 @@ func (g grid) colContains(c, v uint8) bool {
 }
 
 func (g grid) boxContains(i, v uint8) bool {
-    bi := i / 3 * 3 * 9 + i % 3 * 3
+    gi := i / 3 * 3 * 9 + i % 3 * 3
     for j := range uint8(9) {
-        if g[bi + j / 3 * 9 + j % 3] == v {
+        if g[gi + j / 3 * 9 + j % 3] == v {
             return true
         }
     }
@@ -58,8 +58,8 @@ func (g grid) boxContains(i, v uint8) bool {
 
 func (g grid) moveValid(i, v uint8) bool {
     r, c := itorc(i)
-    bi := r / 3 * 3 + c / 3
-    return !g.rowContains(r, v) && !g.colContains(c, v) && !g.boxContains(bi, v)
+    gi := r / 3 * 3 + c / 3
+    return !g.rowContains(r, v) && !g.colContains(c, v) && !g.boxContains(gi, v)
 }
 
 func (g grid) getRow(r uint8) []uint8 {
@@ -109,16 +109,16 @@ func (g grid) valid() bool {
 }
 
 
-func (g grid) backtrack() (uint, error) {
+func (g grid) backtrack() ([]grid, error) {
     unknowns := make([]uint8, 0, 81) // indices of unknowns
     for i, v := range g {
         if v == 0 {
             unknowns = append(unknowns, uint8(i))
         }
     }
-    var cycles uint = 0
     var unknownsIndex uint8 = 0
     var gridIndex uint8 = unknowns[unknownsIndex]
+    var solutions []grid = make([]grid, 0, 1)
     for {
         foundValidTry := false
         for try := g[gridIndex] + 1; try <= 9; try++ {
@@ -129,34 +129,27 @@ func (g grid) backtrack() (uint, error) {
             }
         }
         if foundValidTry {
-            unknownsIndex++
-            if unknownsIndex >= uint8(len(unknowns)) {
+            if unknownsIndex < uint8(len(unknowns)) - 1 {
+                unknownsIndex++
+                gridIndex = unknowns[unknownsIndex]
+            } else {
+                solutions = append(solutions, slices.Clone(g))
+            }
+        } else {
+            g[gridIndex] = 0
+            if unknownsIndex == 0 {
                 break
             }
-            gridIndex = unknowns[unknownsIndex]
-        } else {
-            if unknownsIndex == 0 {
-                return cycles, errors.New("unsolvable")
-            }
-            g[gridIndex] = 0
             unknownsIndex--
             gridIndex = unknowns[unknownsIndex]
         }
-        cycles++
     }
-    return cycles, nil
+    if len(solutions) == 0 {
+        return nil, errors.New("unsolvable")
+    }
+    return solutions, nil
 }
 
-func (g grid) stringFormatted() string {
-    var str string
-    for i, v := range g {
-        str += string(v + '0')
-        if i != 0 && i % 8 == 0 {
-            str += "\n"
-        }
-    }
-    return str
-}
 
 func (g grid) string() string {
     var str string
@@ -167,31 +160,44 @@ func (g grid) string() string {
 }
 
 
-func Solve(gridString string) (string, uint, error) {
-
+func (g grid) solutionValid(solution grid) error {
+    if slices.Contains(solution, 0) {
+        return errors.New("solution contains 0 after solve (should not happen)")
+    }
+    if !solution.valid() {
+        return errors.New("solution not valid after solve (should not happen)")
+    }
+    for i := range g {
+        if g[i] != 0 && g[i] != solution[i] {
+            return errors.New("solution not matching with grid knowns")
+        }
+    }
+    return nil
+}
+func Solve(gridString string) ([]string, error) {
     grid, err := parse(gridString)
     if err != nil {
-        return "", 0, err
+        return nil, err
     }
 
     if !grid.valid() {
-        return "", 0, errors.New("sudoku not valid")
+        return nil, errors.New("sudoku not valid")
     }
 
-    cycles, err := grid.backtrack()
+    solutions, err := grid.backtrack()
     if err != nil {
-        return "", cycles, err
+        return nil, err
     }
 
-    if slices.Contains(grid, 0) {
-        return "", cycles, errors.New("sudoku not solved after solve (should not happen)")
+    solutionStrings := make([]string, len(solutions))
+    for i, solution := range solutions {
+        if err := grid.solutionValid(solution); err != nil {
+            return nil, err
+        }
+        solutionStrings[i] = solution.string()
     }
 
-    if !grid.valid() {
-        return "", cycles, errors.New("sudoku not valid after solve (should not happen)")
-    }
-
-    return grid.string(), cycles, nil
+    return solutionStrings, nil
 }
 
 func IsValid(gridString string) bool {

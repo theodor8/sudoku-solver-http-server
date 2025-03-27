@@ -1,12 +1,12 @@
 package main
 
 import (
-    "fmt"
-    "net"
-    "net/http"
-    "log"
-    "time"
-    "sudokusolver/solver"
+	"fmt"
+	"log"
+	"net"
+	"net/http"
+	"sudokusolver/solver"
+	"time"
 )
 
 
@@ -48,12 +48,12 @@ func main() {
 
 
     router.HandleFunc("/solve/{grid}/", func(w http.ResponseWriter, r *http.Request) {
-        solved, cycles, err := solver.Solve(r.PathValue("grid"))
+        solutions, err := solver.Solve(r.PathValue("grid"))
         if err != nil {
             http.Error(w, err.Error(), http.StatusBadRequest)
             return
         }
-        fmt.Fprintf(w, "solved (%v cycles): %v", cycles, solved)
+        fmt.Fprintf(w, "found %v solutions: %v", len(solutions), solutions)
     })
     router.HandleFunc("/valid/{grid}/", func(w http.ResponseWriter, r *http.Request) {
         if solver.IsValid(r.PathValue("grid")) {
