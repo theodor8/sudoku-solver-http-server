@@ -58,8 +58,8 @@ func (g grid) boxContains(i, v uint8) bool {
 
 func (g grid) moveValid(i, v uint8) bool {
     r, c := itorc(i)
-    gi := r / 3 * 3 + c / 3
-    return !g.rowContains(r, v) && !g.colContains(c, v) && !g.boxContains(gi, v)
+    bi := r / 3 * 3 + c / 3
+    return !g.rowContains(r, v) && !g.colContains(c, v) && !g.boxContains(bi, v)
 }
 
 func (g grid) getRow(r uint8) []uint8 {
