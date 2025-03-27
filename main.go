@@ -47,16 +47,16 @@ func main() {
     router := http.NewServeMux()
 
 
-    router.HandleFunc("/solve/{board}", func(w http.ResponseWriter, r *http.Request) {
-        solved, cycles, err := solver.Solve(r.PathValue("board"))
+    router.HandleFunc("/solve/{grid}", func(w http.ResponseWriter, r *http.Request) {
+        solved, cycles, err := solver.Solve(r.PathValue("grid"))
         if err != nil {
             http.Error(w, err.Error(), http.StatusBadRequest)
             return
         }
         fmt.Fprintf(w, "solved (%v cycles): %v", cycles, solved)
     })
-    router.HandleFunc("/valid/{board}", func(w http.ResponseWriter, r *http.Request) {
-        if solver.IsValid(r.PathValue("board")) {
+    router.HandleFunc("/valid/{grid}", func(w http.ResponseWriter, r *http.Request) {
+        if solver.IsValid(r.PathValue("grid")) {
             fmt.Fprintf(w, "valid")
         } else {
             fmt.Fprintf(w, "not valid")
