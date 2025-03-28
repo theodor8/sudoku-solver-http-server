@@ -4,6 +4,7 @@ import (
     "errors"
     "slices"
     "math/rand/v2"
+
 )
 
 
@@ -112,23 +113,24 @@ func (g grid) valid() bool {
 
 // 0 for all, 1 for 1, ...
 func (g grid) backtrack(numSolutions uint8) []grid {
+    gr := slices.Clone(g)
     unknowns := make([]uint8, 0, 81) // indices of unknowns
-    for i, v := range g {
+    for i, v := range gr {
         if v == 0 {
             unknowns = append(unknowns, uint8(i))
         }
     }
     if len(unknowns) == 0 {
-        return []grid{slices.Clone(g)}
+        return []grid{slices.Clone(gr)}
     }
     var solutions []grid = make([]grid, 0, 1)
     var unknownsIndex uint8 = 0
     var gridIndex uint8 = unknowns[unknownsIndex]
     for {
         foundValidTry := false
-        for try := g[gridIndex] + 1; try <= 9; try++ {
-            if g.moveValid(gridIndex, try) {
-                g[gridIndex] = try
+        for try := gr[gridIndex] + 1; try <= 9; try++ {
+            if gr.moveValid(gridIndex, try) {
+                gr[gridIndex] = try
                 foundValidTry = true
                 break
             }
@@ -138,13 +140,13 @@ func (g grid) backtrack(numSolutions uint8) []grid {
                 unknownsIndex++
                 gridIndex = unknowns[unknownsIndex]
             } else {
-                solutions = append(solutions, slices.Clone(g))
+                solutions = append(solutions, slices.Clone(gr))
                 if numSolutions != 0 && uint8(len(solutions)) == numSolutions {
                     return solutions
                 }
             }
         } else {
-            g[gridIndex] = 0
+            gr[gridIndex] = 0
             if unknownsIndex == 0 {
                 break
             }
@@ -209,28 +211,39 @@ func IsValid(gridString string) bool {
 
 
 
-func createValidGrid(rand *rand.Rand) grid {
+func createFilledGrid(rand *rand.Rand) grid {
     var grid grid = make([]uint8, 81)
-    for {
-        var i uint8 = 0
-        for grid[i] != 0 {
-            i = uint8(rand.Uint() % 9 + 1)
-        }
-        var v uint8 = 1
-        for ; v < 9; v++ {
-            if grid.moveValid(i, v) {
-                break
-            }
-        }
-        if v == 9 {
+
+    var filled uint8 = 0
+    for filled < 81 {
+
+        var i uint8 = uint8(rand.Uint() % 81)
+        if grid[i] != 0 {
             continue
         }
+
+        var v uint8 = uint8(rand.Uint() % 9 + 1)
+        if !grid.moveValid(i, v) {
+            continue
+        }
+
         grid[i] = v
-        // TODO
+        if len(grid.backtrack(1)) == 0 { // no solutions
+            grid[i] = 0
+            continue
+        }
+
+        filled++
     }
+
+    return grid
 }
 
 func Generate(rand *rand.Rand) string {
-    return "not implemented yet"
+    grid := createFilledGrid(rand)
+    if !grid.valid() {
+        return "generated grid not valid (should not happen)"
+    }
+    return grid.string()
 }
 
