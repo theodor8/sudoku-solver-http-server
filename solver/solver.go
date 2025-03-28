@@ -110,18 +110,18 @@ func (g grid) valid() bool {
 }
 
 
-func (g grid) backtrack() ([]grid, error) {
+// 0 for all, 1 for 1, ...
+func (g grid) backtrack(numSolutions uint8) []grid {
     unknowns := make([]uint8, 0, 81) // indices of unknowns
     for i, v := range g {
         if v == 0 {
             unknowns = append(unknowns, uint8(i))
         }
     }
-    var solutions []grid = make([]grid, 0, 1)
     if len(unknowns) == 0 {
-        solutions = append(solutions, slices.Clone(g))
-        return solutions, nil
+        return []grid{slices.Clone(g)}
     }
+    var solutions []grid = make([]grid, 0, 1)
     var unknownsIndex uint8 = 0
     var gridIndex uint8 = unknowns[unknownsIndex]
     for {
@@ -139,6 +139,9 @@ func (g grid) backtrack() ([]grid, error) {
                 gridIndex = unknowns[unknownsIndex]
             } else {
                 solutions = append(solutions, slices.Clone(g))
+                if numSolutions != 0 && uint8(len(solutions)) == numSolutions {
+                    return solutions
+                }
             }
         } else {
             g[gridIndex] = 0
@@ -149,10 +152,7 @@ func (g grid) backtrack() ([]grid, error) {
             gridIndex = unknowns[unknownsIndex]
         }
     }
-    if len(solutions) == 0 {
-        return nil, errors.New("unsolvable")
-    }
-    return solutions, nil
+    return solutions
 }
 
 
@@ -189,10 +189,7 @@ func Solve(gridString string) ([]string, error) {
         return nil, errors.New("sudoku not valid")
     }
 
-    solutions, err := grid.backtrack()
-    if err != nil {
-        return nil, err
-    }
+    solutions := grid.backtrack(0)
 
     solutionStrings := make([]string, len(solutions))
     for i, solution := range solutions {
@@ -209,6 +206,7 @@ func IsValid(gridString string) bool {
     grid, err := parse(gridString)
     return err == nil && grid.valid()
 }
+
 
 
 func createValidGrid(rand *rand.Rand) grid {

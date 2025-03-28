@@ -65,7 +65,7 @@ func main() {
         }
     })
     router.HandleFunc("/gen/", func(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, solver.Generate(rand))
+        fmt.Fprintf(w, "generated: %v", solver.Generate(rand))
     })
     router.HandleFunc("/quit/", func(w http.ResponseWriter, r *http.Request) {
         log.Fatal("quitting")
