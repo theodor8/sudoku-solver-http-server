@@ -1,7 +1,7 @@
 package solver
 
 import (
-	// "math/rand/v2"
+	"math/rand/v2"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -92,17 +92,17 @@ func TestSolve(t *testing.T) {
     })
 }
 
-// func TestGenerate(t *testing.T) {
-//     t.Run("Generate", func(t *testing.T) {
-//         r := rand.New(rand.NewPCG(1, 2))
-//         for range 100 {
-//             generated := Generate(r)
-//             solutions, err := Solve(generated)
-//             assert.NoError(t, err)
-//             assert.Equal(t, 1, len(solutions))
-//         }
-//     })
-// }
+func TestGenerate(t *testing.T) {
+    t.Run("Generate", func(t *testing.T) {
+        r := rand.New(rand.NewPCG(1, 2))
+        for range 100 {
+            generated := Generate(r)
+            solutions, err := Solve(generated)
+            assert.NoError(t, err)
+            assert.Equal(t, 1, len(solutions))
+        }
+    })
+}
 
 
 
