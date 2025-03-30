@@ -231,17 +231,17 @@ func createFilledGrid(rand *rand.Rand) grid {
     return grid
 }
 
-func Generate(rand *rand.Rand) string {
+func Generate(rand *rand.Rand, unknowns uint8) string {
     grid := createFilledGrid(rand)
-    if !grid.valid() {
-        return "generated grid not valid (should not happen)"
-    }
-    for _, i := range rand.Perm(81) {
-        removed := grid[i]
-        grid[i] = 0
+    for i, gridIndex := range rand.Perm(81) {
+        if uint8(i) >= unknowns {
+            break
+        }
+        removed := grid[gridIndex]
+        grid[gridIndex] = 0
         if len(grid.backtrack(2)) > 1 {
-            // more than 1 solution --> put back
-            grid[i] = removed
+            // more than 1 solution --> put back, go to next index
+            grid[gridIndex] = removed
         }
     }
     return grid.string()

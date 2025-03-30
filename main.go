@@ -6,6 +6,7 @@ import (
 	"math/rand/v2"
 	"net"
 	"net/http"
+	"strconv"
 	"sudokusolver/solver"
 	"time"
 )
@@ -64,8 +65,13 @@ func main() {
             fmt.Fprintf(w, "not valid")
         }
     })
-    router.HandleFunc("/gen/", func(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, "generated: %v", solver.Generate(rand))
+    router.HandleFunc("/gen/{unknowns}", func(w http.ResponseWriter, r *http.Request) {
+        unknowns, err := strconv.ParseUint(r.PathValue("unknowns"), 10, 8)
+        if err != nil {
+            http.Error(w, err.Error(), http.StatusBadRequest)
+            return
+        }
+        fmt.Fprintf(w, "generated: %v", solver.Generate(rand, uint8(unknowns)))
     })
     router.HandleFunc("/quit/", func(w http.ResponseWriter, r *http.Request) {
         log.Fatal("quitting")
