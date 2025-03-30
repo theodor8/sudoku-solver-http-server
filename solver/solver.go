@@ -4,7 +4,6 @@ import (
     "errors"
     "slices"
     "math/rand/v2"
-
 )
 
 
@@ -176,7 +175,7 @@ func (g grid) solutionValid(solution grid) error {
     }
     for i := range g {
         if g[i] != 0 && g[i] != solution[i] {
-            return errors.New("solution not matching with grid knowns")
+            return errors.New("solution not matching with grid knowns (should not happen)")
         }
     }
     return nil
@@ -236,6 +235,14 @@ func Generate(rand *rand.Rand) string {
     grid := createFilledGrid(rand)
     if !grid.valid() {
         return "generated grid not valid (should not happen)"
+    }
+    for _, i := range rand.Perm(81) {
+        removed := grid[i]
+        grid[i] = 0
+        if len(grid.backtrack(2)) > 1 {
+            // more than 1 solution --> put back
+            grid[i] = removed
+        }
     }
     return grid.string()
 }

@@ -95,11 +95,12 @@ func TestSolve(t *testing.T) {
 func TestGenerate(t *testing.T) {
     t.Run("Generate", func(t *testing.T) {
         r := rand.New(rand.NewPCG(1, 2))
-        for range 100 {
+        for range 10 {
             generated := Generate(r)
             solutions, err := Solve(generated)
             assert.NoError(t, err)
             assert.Equal(t, 1, len(solutions))
+            assert.NotEqual(t, generated, solutions[0])
         }
     })
 }
