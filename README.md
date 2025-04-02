@@ -1,1 +1,1 @@
-# sudoku-solver-go
+Sudoku solver and generator http server
