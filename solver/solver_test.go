@@ -96,7 +96,7 @@ func TestSolve(t *testing.T) {
 func TestGenerate(t *testing.T) {
     t.Run("Generate", func(t *testing.T) {
         r := rand.New(rand.NewPCG(1, 2))
-        for unknowns := range uint8(15) {
+        for unknowns := range uint8(20) {
             generated := Generate(r, unknowns)
             solutions, err := Solve(generated)
             assert.NoError(t, err)

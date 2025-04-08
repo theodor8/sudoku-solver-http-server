@@ -7,6 +7,7 @@ import (
 	"net"
 	"net/http"
 	"strconv"
+	"sudokusolver/db"
 	"sudokusolver/solver"
 	"time"
 )
@@ -21,7 +22,6 @@ func GetLocalIP() net.IP {
     localAddress := conn.LocalAddr().(*net.UDPAddr)
     return localAddress.IP
 }
-
 
 
 type wrappedWriter struct {
@@ -44,19 +44,33 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 
 
 
+
 func main() {
 
+    db.Init()
     router := http.NewServeMux()
-
     rand := rand.New(rand.NewPCG(uint64(time.Now().UnixNano()), uint64(time.Now().UnixNano())))
 
     router.HandleFunc("/solve/{grid}/", func(w http.ResponseWriter, r *http.Request) {
-        solutions, err := solver.Solve(r.PathValue("grid"))
+        input := r.PathValue("grid")
+        cachedSolutions := db.FindSolutions(input)
+        if cachedSolutions != nil {
+            fmt.Fprintf(w, "found %v (cached) solutions:\n", len(cachedSolutions))
+            for _, solution := range cachedSolutions {
+                fmt.Fprintf(w, "%s\n", solution)
+            }
+            return
+        }
+        solutions, err := solver.Solve(input)
         if err != nil {
             http.Error(w, err.Error(), http.StatusBadRequest)
             return
         }
-        fmt.Fprintf(w, "found %v solutions: %v", len(solutions), solutions)
+        db.StoreSolutions(input, solutions)
+        fmt.Fprintf(w, "found %v solutions:\n", len(solutions))
+        for _, solution := range solutions {
+            fmt.Fprintf(w, "%s\n", solution)
+        }
     })
     router.HandleFunc("/valid/{grid}/", func(w http.ResponseWriter, r *http.Request) {
         if solver.IsValid(r.PathValue("grid")) {
@@ -65,16 +79,26 @@ func main() {
             fmt.Fprintf(w, "not valid")
         }
     })
+    router.HandleFunc("/gen/", func(w http.ResponseWriter, r *http.Request) {
+        http.Redirect(w, r, "/gen/40", http.StatusMovedPermanently)
+    })
     router.HandleFunc("/gen/{unknowns}", func(w http.ResponseWriter, r *http.Request) {
         unknowns, err := strconv.ParseUint(r.PathValue("unknowns"), 10, 8)
         if err != nil {
             http.Error(w, err.Error(), http.StatusBadRequest)
             return
         }
-        fmt.Fprintf(w, "generated: %v", solver.Generate(rand, uint8(unknowns)))
+        fmt.Fprintf(w, "generated:\n%v", solver.Generate(rand, uint8(unknowns)))
     })
     router.HandleFunc("/quit/", func(w http.ResponseWriter, r *http.Request) {
         log.Fatal("quitting")
+    })
+    router.HandleFunc("/db/", func(w http.ResponseWriter, r *http.Request) {
+        solutions := db.AllSolutions()
+        fmt.Fprintf(w, "total: %v cached inputs\n\n", len(solutions))
+        for k, v := range solutions {
+            fmt.Fprintf(w, "%s --> %s\n\n", k, v)
+        }
     })
 
 
@@ -82,10 +106,7 @@ func main() {
         Addr: ":8080",
         Handler: LoggingMiddleware(router),
     }
-
     fmt.Printf("server listening on %v:%v\n", GetLocalIP(), 8080)
-
     log.Fatal(server.ListenAndServe())
-
 }
 
