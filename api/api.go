@@ -9,11 +9,17 @@ import (
 type SolveParams struct {
     Input string 
 }
-
-
 type SolveResponse struct {
     Code int
-    Solution string
+    Solution []string
+}
+
+type ValidParams struct {
+    Input string
+}
+type ValidResponse struct {
+    Code int
+    Valid bool
 }
 
 

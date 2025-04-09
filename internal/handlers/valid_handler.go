@@ -1,10 +1,8 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 	"sudoku-server/api"
-	"sudoku-server/internal/solver"
 	"sudoku-server/internal/tools"
 
 	"github.com/gorilla/schema"
@@ -12,7 +10,8 @@ import (
 )
 
 
-func SolveHandler(w http.ResponseWriter, r *http.Request) {
+
+func ValidHandler(w http.ResponseWriter, r *http.Request) {
     params := api.SolveParams{}
     decoder := schema.NewDecoder()
     
@@ -59,5 +58,4 @@ func SolveHandler(w http.ResponseWriter, r *http.Request) {
         log.Error("Failed to encode response: ", err)
         api.InternalErrorHandler(w)
     }
-
 }

@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"sudoku-server/api"
@@ -16,7 +15,6 @@ func Authorization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		token := r.Header.Get("Authorization")
-		fmt.Println("Token: ", token)
 		if token == "" {
 			log.Error(UnauthorizedError)
 			api.RequestErrorHandler(w, UnauthorizedError)

@@ -5,14 +5,16 @@ import (
 )
 
 
-type SolutionDetails struct {
+type Solutions []string
+
+type SolutionData struct {
     Input string
-    Solutions string // TODO: make this a slice
+    Solutions Solutions
 }
 
 type DatabaseInterface interface {
-    GetSolutionDetails(input string) *SolutionDetails
-    StoreSolutionDetails(solutions *SolutionDetails) error
+    GetSolutionData(input string) *SolutionData
+    StoreSolutionData(solutions *SolutionData) error
     SetupDatabase() error
 }
 
