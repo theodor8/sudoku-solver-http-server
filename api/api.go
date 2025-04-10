@@ -22,6 +22,14 @@ type ValidResponse struct {
     Valid bool
 }
 
+type GenParams struct {
+    Unknowns uint8
+}
+type GenResponse struct {
+    Code int
+    Grid string
+}
+
 
 type Error struct {
     Code int

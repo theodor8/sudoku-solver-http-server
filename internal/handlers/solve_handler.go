@@ -19,7 +19,7 @@ func SolveHandler(w http.ResponseWriter, r *http.Request) {
     err := decoder.Decode(&params, r.URL.Query())
 
     if err != nil {
-        log.Error("Failed to decode parameters: ", err)
+        log.Error("failed to decode parameters: ", err)
         api.InternalErrorHandler(w)
         return
     }
@@ -35,19 +35,19 @@ func SolveHandler(w http.ResponseWriter, r *http.Request) {
     solutionData := (*database).GetSolutionData(params.Input)
     if solutionData != nil {
         solutions = solutionData.Solutions
-        log.Info("Solution found in database")
+        log.Info("solution found in database")
     } else {
         solutions, err = solver.Solve(params.Input)
         if err != nil {
-            log.Error("Solve failed: ", err)
-            api.InternalErrorHandler(w)
+            log.Error("solve failed: ", err)
+            api.RequestErrorHandler(w, err)
             return
         }
         (*database).StoreSolutionData(&tools.SolutionData{
             Input: params.Input,
             Solutions: solutions,
         })
-        log.Info("Solution computed and stored in database")
+        log.Info("solution computed and stored in database")
     }
 
     w.Header().Set("Content-Type", "application/json")
@@ -56,7 +56,7 @@ func SolveHandler(w http.ResponseWriter, r *http.Request) {
         Solution: solutions,
     }
     if err := json.NewEncoder(w).Encode(response); err != nil {
-        log.Error("Failed to encode response: ", err)
+        log.Error("failed to encode response: ", err)
         api.InternalErrorHandler(w)
     }
 
