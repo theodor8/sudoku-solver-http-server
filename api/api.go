@@ -6,39 +6,18 @@ import (
 )
 
 
-type SolveParams struct {
-    Input string 
-}
-type SolveResponse struct {
-    Code int
-    Solution []string
-}
-
-type ValidParams struct {
-    Input string
-}
-type ValidResponse struct {
-    Code int
-    Valid bool
-}
-
-type GenParams struct {
-    Unknowns uint8
-}
-type GenResponse struct {
-    Code int
-    Grid string
-}
 
 
-type Error struct {
+
+
+type ErrorResponse struct {
     Code int
     Message string
 }
 
 
 func writeError(w http.ResponseWriter, message string, code int) {
-    response := Error{
+    response := ErrorResponse{
         Code: code,
         Message: message,
     }

@@ -10,10 +10,17 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type ValidParams struct {
+    Input string
+}
+type ValidResponse struct {
+    Code int
+    Valid bool
+}
 
 
 func ValidHandler(w http.ResponseWriter, r *http.Request) {
-    params := api.SolveParams{}
+    params := ValidParams{}
     decoder := schema.NewDecoder()
     
     err := decoder.Decode(&params, r.URL.Query())
@@ -27,7 +34,7 @@ func ValidHandler(w http.ResponseWriter, r *http.Request) {
     valid := solver.IsValid(params.Input)
 
     w.Header().Set("Content-Type", "application/json")
-    response := api.ValidResponse{
+    response := ValidResponse{
         Code: http.StatusOK,
         Valid: valid,
     }

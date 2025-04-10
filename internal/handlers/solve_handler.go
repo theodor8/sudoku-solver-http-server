@@ -12,8 +12,17 @@ import (
 )
 
 
+type SolveParams struct {
+    Input string 
+}
+type SolveResponse struct {
+    Code int
+    Solution []string
+}
+
+
 func SolveHandler(w http.ResponseWriter, r *http.Request) {
-    params := api.SolveParams{}
+    params := SolveParams{}
     decoder := schema.NewDecoder()
     
     err := decoder.Decode(&params, r.URL.Query())
@@ -51,7 +60,7 @@ func SolveHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     w.Header().Set("Content-Type", "application/json")
-    response := api.SolveResponse{
+    response := SolveResponse{
         Code: http.StatusOK,
         Solution: solutions,
     }

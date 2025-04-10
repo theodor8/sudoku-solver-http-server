@@ -14,10 +14,17 @@ import (
 
 
 
+type GenParams struct {
+    Unknowns uint8
+}
+type GenResponse struct {
+    Code int
+    Grid string
+}
 
 func GenHandler(w http.ResponseWriter, r *http.Request) {
 
-    params := api.GenParams{}
+    params := GenParams{}
 
     if _, ok := r.URL.Query()["unknowns"]; !ok {
         params.Unknowns = 40
@@ -34,9 +41,10 @@ func GenHandler(w http.ResponseWriter, r *http.Request) {
 
     rand := rand.New(rand.NewPCG(uint64(time.Now().UnixNano()), uint64(time.Now().UnixNano())))
     grid := solver.Generate(rand, params.Unknowns)
+    log.Info("generated grid with ", params.Unknowns, " unknowns")
 
     w.Header().Set("Content-Type", "application/json")
-    response := api.GenResponse{
+    response := GenResponse{
         Code: http.StatusOK,
         Grid: grid,
     }

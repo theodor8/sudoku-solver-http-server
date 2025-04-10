@@ -27,6 +27,18 @@ type sqliteDB struct {
     db *gorm.DB
 }
 
+var _ DatabaseInterface = &sqliteDB{}
+
+
+func (db *sqliteDB) SetupDatabase() error {
+    var err error
+    db.db, err = gorm.Open(sqlite.Open("database.db"), &gorm.Config{})
+    if err != nil {
+        panic("Failed to open database.")
+    }
+    db.db.AutoMigrate(&SolutionData{})
+    return nil
+}
 
 func (db *sqliteDB) GetSolutionData(input string) *SolutionData {
     var solution SolutionData
@@ -45,15 +57,11 @@ func (db *sqliteDB) StoreSolutionData(solutions *SolutionData) error {
     return nil
 }
 
-
-func (db *sqliteDB) SetupDatabase() error {
-    var err error
-    db.db, err = gorm.Open(sqlite.Open("database.db"), &gorm.Config{})
-    if err != nil {
-        panic("Failed to open database.")
-    }
-    db.db.AutoMigrate(&SolutionData{})
-    return nil
+func (db *sqliteDB) GetAllSolutionData() []SolutionData {
+    var solutionDatas []SolutionData
+    db.db.Find(&solutionDatas)
+    return solutionDatas
 }
+
 
 
