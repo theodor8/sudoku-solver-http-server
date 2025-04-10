@@ -3,23 +3,22 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"sudoku-server/api"
-	"sudoku-server/internal/tools"
+	"sudoku-server/database"
 
 	log "github.com/sirupsen/logrus"
 )
 
 type DbResponse struct {
     Code int
-    Data []tools.SolutionData
+    Data []database.SolutionData
 }
 
 func DbHandler(w http.ResponseWriter, r *http.Request) {
 
-    database, err := tools.NewDatabase()
+    database, err := database.NewDatabase()
     if err != nil {
         log.Error(err)
-        api.InternalErrorHandler(w)
+        InternalErrorHandler(w)
         return
     }
 
@@ -32,6 +31,6 @@ func DbHandler(w http.ResponseWriter, r *http.Request) {
     }
     if err := json.NewEncoder(w).Encode(response); err != nil {
         log.Error("failed to encode response: ", err)
-        api.InternalErrorHandler(w)
+        InternalErrorHandler(w)
     }
 }

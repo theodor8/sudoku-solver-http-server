@@ -3,8 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"sudoku-server/api"
-	"sudoku-server/internal/solver"
+	"sudoku-server/solver"
 
 	"github.com/gorilla/schema"
 	log "github.com/sirupsen/logrus"
@@ -27,7 +26,7 @@ func ValidHandler(w http.ResponseWriter, r *http.Request) {
 
     if err != nil {
         log.Error("failed to decode parameters: ", err)
-        api.InternalErrorHandler(w)
+        InternalErrorHandler(w)
         return
     }
 
@@ -40,6 +39,6 @@ func ValidHandler(w http.ResponseWriter, r *http.Request) {
     }
     if err := json.NewEncoder(w).Encode(response); err != nil {
         log.Error("failed to encode response: ", err)
-        api.InternalErrorHandler(w)
+        InternalErrorHandler(w)
     }
 }

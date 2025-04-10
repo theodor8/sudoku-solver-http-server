@@ -5,7 +5,7 @@ import (
 	"net"
 	"net/http"
 
-	"sudoku-server/internal/handlers"
+	"sudoku-server/handlers"
 
 	"github.com/go-chi/chi"
 	log "github.com/sirupsen/logrus"
@@ -20,8 +20,6 @@ func GetLocalIP() net.IP {
     localAddress := conn.LocalAddr().(*net.UDPAddr)
     return localAddress.IP
 }
-
-
 
 func main() {
 

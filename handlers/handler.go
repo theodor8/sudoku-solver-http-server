@@ -1,12 +1,12 @@
-package api
+package handlers
 
 import (
-    "encoding/json"
-    "net/http"
+	"encoding/json"
+	"net/http"
+
+	"github.com/go-chi/chi"
+	chimiddle "github.com/go-chi/chi/middleware"
 )
-
-
-
 
 
 
@@ -14,7 +14,6 @@ type ErrorResponse struct {
     Code int
     Message string
 }
-
 
 func writeError(w http.ResponseWriter, message string, code int) {
     response := ErrorResponse{
@@ -39,4 +38,20 @@ var (
 
 
 
+func Handler(r *chi.Mux) {
 
+    creds := map[string]string{
+        "admin": "password",
+    }
+
+    r.Use(chimiddle.StripSlashes)
+    r.Use(chimiddle.Logger)
+    r.Use(chimiddle.BasicAuth("Restricted", creds))
+
+
+    r.Get("/solve", SolveHandler)
+    r.Get("/valid", ValidHandler)
+    r.Get("/gen", GenHandler)
+    r.Get("/db", DbHandler)
+
+}

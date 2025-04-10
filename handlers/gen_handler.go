@@ -4,8 +4,7 @@ import (
 	"encoding/json"
 	"math/rand/v2"
 	"net/http"
-	"sudoku-server/api"
-	"sudoku-server/internal/solver"
+	"sudoku-server/solver"
 	"time"
 
 	"github.com/gorilla/schema"
@@ -34,7 +33,7 @@ func GenHandler(w http.ResponseWriter, r *http.Request) {
 
         if err != nil {
             log.Error("failed to decode parameters: ", err)
-            api.InternalErrorHandler(w)
+            InternalErrorHandler(w)
             return
         }
     }
@@ -50,6 +49,6 @@ func GenHandler(w http.ResponseWriter, r *http.Request) {
     }
     if err := json.NewEncoder(w).Encode(response); err != nil {
         log.Error("failed to encode response: ", err)
-        api.InternalErrorHandler(w)
+        InternalErrorHandler(w)
     }
 }
