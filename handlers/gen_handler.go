@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"math/rand/v2"
 	"net/http"
-	"sudoku-server/solver"
+	"sudoku-server/sudoku"
 	"time"
 
 	"github.com/gorilla/schema"
@@ -39,7 +39,7 @@ func GenHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     rand := rand.New(rand.NewPCG(uint64(time.Now().UnixNano()), uint64(time.Now().UnixNano())))
-    grid := solver.Generate(rand, params.Unknowns)
+    grid := sudoku.Generate(rand, params.Unknowns)
     log.Info("generated grid with ", params.Unknowns, " unknowns")
 
     w.Header().Set("Content-Type", "application/json")

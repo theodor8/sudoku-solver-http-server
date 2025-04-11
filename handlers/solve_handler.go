@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"sudoku-server/solver"
+	"sudoku-server/sudoku"
         "sudoku-server/database"
 
 	"github.com/gorilla/schema"
@@ -45,7 +45,7 @@ func SolveHandler(w http.ResponseWriter, r *http.Request) {
         solutions = solutionData.Solutions
         log.Info("solution found in database")
     } else {
-        solutions, err = solver.Solve(params.Input)
+        solutions, err = sudoku.Solve(params.Input)
         if err != nil {
             log.Error("solve failed: ", err)
             RequestErrorHandler(w, err)

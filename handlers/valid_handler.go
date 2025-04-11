@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"sudoku-server/solver"
+	"sudoku-server/sudoku"
 
 	"github.com/gorilla/schema"
 	log "github.com/sirupsen/logrus"
@@ -30,7 +30,7 @@ func ValidHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    valid := solver.IsValid(params.Input)
+    valid := sudoku.IsValid(params.Input)
 
     w.Header().Set("Content-Type", "application/json")
     response := ValidResponse{
