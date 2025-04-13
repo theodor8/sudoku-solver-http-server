@@ -1,1 +1,1 @@
-Sudoku solver and generator http server with sqlite solution cache
+Sudoku solver and generator rest api server with sqlite solution cache
