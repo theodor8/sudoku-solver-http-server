@@ -29,7 +29,7 @@ func main() {
 
     fmt.Printf("server listening on %v:%v\n", GetLocalIP(), 8080)
 
-    err := http.ListenAndServe("localhost:8080", r)
+    err := http.ListenAndServe("0.0.0.0:8080", r)
     if err != nil {
         log.Error(err)
     }
