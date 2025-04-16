@@ -3,7 +3,21 @@ package sudoku
 import "slices"
 
 
-// TODO: constraint programming
+// -1: no possible,  0: more than 1 possible, 1-9: one possible
+func onlyOnePossible(possible []bool) int {
+    var possibleNum int = -1
+    for i := range possible {
+        if possible[i] {
+            if possibleNum != -1 {
+                return 0
+            }
+            possibleNum = i + 1
+        }
+    }
+    return possibleNum
+}
+
+
 func (g grid) constraint() []grid {
     g = slices.Clone(g)
 
@@ -35,8 +49,23 @@ func (g grid) constraint() []grid {
             // box
             possible[box+i%3*9+i/3][g[cell]-1] = false
         }
-
     }
+
+    for cell := range 81 {
+
+        possibleNum := onlyOnePossible(possible[cell])
+        if possibleNum == -1 {
+            // unsolvable (no possible)
+            // TODO: constraint unsolvable
+        }
+        if possibleNum == 0 {
+            // more than 1 possible
+            continue
+        }
+
+        g[cell] = uint8(possibleNum)
+    }
+
 
 
 
