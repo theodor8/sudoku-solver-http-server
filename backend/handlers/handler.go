@@ -40,13 +40,23 @@ var (
 
 func Handler(r *chi.Mux) {
 
-    creds := map[string]string{
-        "admin": "password",
-    }
 
     r.Use(chimiddle.StripSlashes)
     r.Use(chimiddle.Logger)
-    r.Use(chimiddle.BasicAuth("Restricted", creds))
+
+    // CORS
+    r.Use(func(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+            w.Header().Set("Access-Control-Allow-Origin", "*")
+            next.ServeHTTP(w, r)
+        })
+    })
+
+    // AUTH
+    // creds := map[string]string{
+    //     "admin": "password",
+    // }
+    // r.Use(chimiddle.BasicAuth("Restricted", creds))
 
 
     r.Get("/solve", SolveHandler)

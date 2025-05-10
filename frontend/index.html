@@ -6,18 +6,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <link rel="stylesheet" href="style.css">
-  <title>Vue Test</title>
+  <title>Sudoku Solver</title>
 </head>
 
 <body>
   <div id="app">
-    <h1>{{ message }}</h1>
-    <h2>{{ count }}</h2>
-    <button @click="clickMe">Click Me</butto>
+    <h1>Sudoku Solver</h1>
+    <div class="grid">
+      <input class="cell" v-for="cell in 81" :key="cell" v-model="grid[cell - 1]" maxlength="1" />
+    </div>
+    <button @click="generate">Generate</button>
   </div>
 
   <script type="module">
-    const { createApp } = Vue
+    const {createApp} = Vue
     import App from './app.js'
 
     createApp(App).mount('#app')

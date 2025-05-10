@@ -3,20 +3,18 @@ const { ref } = Vue;
 
 export default {
   setup() {
-    const message = ref("Hello Vue 3!");
-    const count = ref(0);
+    const grid = ref(Array(81).fill(""));
 
-    const clickMe = () => {
-      count.value++;
-      if (count.value === 1) {
-        message.value = "Button clicked";
-      }
+    const generate = async () => {
+      const response = await fetch('http://localhost:8081/gen', { method: 'GET' });
+      const data = await response.json();
+      grid.value = data.Grid.split("").map(cell => cell === "0" ? "" : cell);
     };
 
     return {
-      message,
-      count,
-      clickMe,
+      grid,
+      generate,
     };
+
   }
 }
