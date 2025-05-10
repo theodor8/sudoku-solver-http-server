@@ -16,7 +16,6 @@ type DatabaseInterface interface {
     SetupDatabase() error
     GetSolutionData(input string) *SolutionData
     StoreSolutionData(solutions *SolutionData) error
-    GetAllSolutionData() []SolutionData
 }
 
 func NewDatabase() (*DatabaseInterface, error) {

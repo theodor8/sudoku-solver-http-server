@@ -52,6 +52,4 @@ func Handler(r *chi.Mux) {
     r.Get("/solve", SolveHandler)
     r.Get("/valid", ValidHandler)
     r.Get("/gen", GenHandler)
-    r.Get("/db", DbHandler)
-
 }

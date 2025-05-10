@@ -30,6 +30,7 @@ func ValidHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
+    log.Info("validating: ", params.Input)
     valid := sudoku.IsValid(params.Input)
 
     w.Header().Set("Content-Type", "application/json")

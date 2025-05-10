@@ -23,7 +23,7 @@ type SolveResponse struct {
 func SolveHandler(w http.ResponseWriter, r *http.Request) {
     params := SolveParams{}
     decoder := schema.NewDecoder()
-    
+
     err := decoder.Decode(&params, r.URL.Query())
 
     if err != nil {
@@ -38,6 +38,8 @@ func SolveHandler(w http.ResponseWriter, r *http.Request) {
         InternalErrorHandler(w)
         return
     }
+
+    log.Info("solving: ", params.Input)
 
     var solutions []string
     solutionData := (*db).GetSolutionData(params.Input)

@@ -57,11 +57,6 @@ func (db *sqliteDB) StoreSolutionData(solutions *SolutionData) error {
     return nil
 }
 
-func (db *sqliteDB) GetAllSolutionData() []SolutionData {
-    var solutionDatas []SolutionData
-    db.db.Find(&solutionDatas)
-    return solutionDatas
-}
 
 
 

@@ -22,14 +22,14 @@ func GetLocalIP() net.IP {
 }
 
 func main() {
+    const port = 8081
 
-    // log.SetReportCaller(true)
     var r *chi.Mux = chi.NewRouter()
     handlers.Handler(r)
 
-    fmt.Printf("server listening on %v:%v\n", GetLocalIP(), 8080)
+    fmt.Printf("server listening on %v:%v\n", GetLocalIP(), port)
 
-    err := http.ListenAndServe("0.0.0.0:8080", r)
+    err := http.ListenAndServe(fmt.Sprintf("0.0.0.0:%d", port), r)
     if err != nil {
         log.Error(err)
     }
