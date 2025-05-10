@@ -12,10 +12,17 @@
 <body>
   <div id="app">
     <h1>Sudoku Solver</h1>
-    <div class="grid">
-      <input class="cell" v-for="cell in 81" :key="cell" v-model="grid[cell - 1]" maxlength="1" />
+      <h3 class="status">{{ status }}</h3>
+    <div class="container">
+      <div class="grid">
+        <input class="cell" v-for="cell in 81" :key="cell" v-model="grid[cell - 1]" maxlength="1" />
+      </div>
+      <div class="buttons">
+        <button @click="clear">Clear</button>
+        <button @click="generate">Generate</button>
+        <button @click="solve">Solve</button>
+      </div>
     </div>
-    <button @click="generate">Generate</button>
   </div>
 
   <script type="module">

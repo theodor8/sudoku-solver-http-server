@@ -16,7 +16,7 @@ type SolveParams struct {
 }
 type SolveResponse struct {
     Code int
-    Solution []string
+    Solutions []string
 }
 
 
@@ -63,7 +63,7 @@ func SolveHandler(w http.ResponseWriter, r *http.Request) {
     w.Header().Set("Content-Type", "application/json")
     response := SolveResponse{
         Code: http.StatusOK,
-        Solution: solutions,
+        Solutions: solutions,
     }
     if err := json.NewEncoder(w).Encode(response); err != nil {
         log.Error("failed to encode response: ", err)
