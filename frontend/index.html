@@ -1,36 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <link rel="stylesheet" href="style.css">
-  <title>Sudoku Solver</title>
-</head>
-
-<body>
-  <div id="app">
-    <h1>Sudoku Solver</h1>
-      <h3>{{ status }}</h3>
-    <div class="container">
-      <div class="grid">
-        <input class="cell" v-for="cell in 81" :key="cell" v-model="grid[cell - 1]" maxlength="1" />
-      </div>
-      <div class="buttons">
-        <button @click="clear">Clear</button>
-        <button @click="generate">Generate</button>
-        <button @click="solve">Solve</button>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <title>Sudoku Solver</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Sudoku Solver</h1>
+      <div class="container">
+        <div class="grid">
+          <input
+            class="cell"
+            v-for="cell in 81"
+            :key="cell"
+            v-model="grid[cell - 1]"
+            maxlength="1"
+            inputmode="numeric"
+            pattern="[1-9]"
+            @input="onInput(cell - 1)"
+          >
+        </div>
+        <div class="buttons">
+          <button @click="clear">Clear</button>
+          <button @click="generate">Generate</button>
+          <button @click="solve">Solve</button>
+        </div>
+        <h3>{{ status }}</h3>
       </div>
     </div>
-  </div>
-
-  <script type="module">
-    const {createApp} = Vue
+    <script type="module">
+      const {createApp} = Vue
     import App from './app.js'
 
     createApp(App).mount('#app')
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>

@@ -19,9 +19,9 @@ export default {
 
     const solve = async () => {
       const gridString = grid.value.map(cell => cell === "" ? "0" : cell).join("");
-        const response = await fetch(`http://localhost:8081/solve?input=${gridString}`, {
-          method: 'GET',
-        });
+      const response = await fetch(`http://localhost:8081/solve?input=${gridString}`, {
+        method: 'GET',
+      });
       const data = await response.json();
       if (data.Code === 200) {
         grid.value = data.Solutions[0].split("").map(cell => cell === "0" ? "" : cell);
@@ -31,6 +31,12 @@ export default {
       }
     }
 
+    const onInput = (index) => {
+      const value = grid.value[index];
+      if (!/^[1-9]$/.test(value)) {
+        grid.value[index] = "";
+      }
+    }
 
     return {
       grid,
@@ -38,6 +44,7 @@ export default {
       clear,
       generate,
       solve,
+      onInput,
     };
 
   }
