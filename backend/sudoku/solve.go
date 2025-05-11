@@ -1,7 +1,9 @@
 package sudoku
 
 import (
+	"context"
 	"errors"
+	"time"
 )
 
 func Solve(gridString string) ([]string, error) {
@@ -14,7 +16,12 @@ func Solve(gridString string) ([]string, error) {
 		return nil, errors.New("sudoku not valid")
 	}
 
-	solutions := grid.backtrack(0)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+	solutions := grid.backtrack(ctx, 0)
+	if solutions == nil {
+		return nil, errors.New("solve timed out")
+	}
 
 	solutionStrings := make([]string, len(solutions))
 	for i, solution := range solutions {

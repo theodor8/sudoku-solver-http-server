@@ -101,7 +101,8 @@ func TestGenerate(t *testing.T) {
     t.Run("Generate", func(t *testing.T) {
         r := rand.New(rand.NewPCG(2, 3))
         for unknowns := range uint8(25) {
-            generated := Generate(r, unknowns)
+            generated, err := Generate(r, unknowns)
+            assert.NoError(t, err)
             solutions, err := Solve(generated)
             assert.NoError(t, err)
             assert.Equal(t, 1, len(solutions))

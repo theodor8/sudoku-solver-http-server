@@ -1,9 +1,12 @@
 package sudoku
 
-import "slices"
+import (
+    "context"
+    "slices"
+)
 
 // 0 for all, 1 for 1, ...
-func (g grid) backtrack(numSolutions uint8) []grid {
+func (g grid) backtrack(ctx context.Context, numSolutions uint8) []grid {
     gr := slices.Clone(g)
     unknowns := make([]uint8, 0, 81) // indices of unknowns
     for i, v := range gr {
@@ -18,6 +21,11 @@ func (g grid) backtrack(numSolutions uint8) []grid {
     var unknownsIndex uint8 = 0
     var gridIndex uint8 = unknowns[unknownsIndex]
     for {
+        select {
+        case <-ctx.Done(): 
+            return nil
+        default:
+        }
         foundValidTry := false
         for try := gr[gridIndex] + 1; try <= 9; try++ {
             if gr.moveValid(gridIndex, try) {

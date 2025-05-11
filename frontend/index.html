@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <title>Sudoku Solver</title>
   </head>
   <body>
@@ -36,8 +37,14 @@
             <input id="generateUnknowns" class="generate-unknowns" type="number" min="0" max="80" v-model="generateUnknowns">
           </div>
           <button @click="solve">Solve</button>
+          <input id="importExport" class="import-export-input" type="text" v-model="importExportString" placeholder="Paste grid string here">
+          <div class="import-export-buttons">
+            <button @click="importGrid" class="import-button">Import</button>
+            <button @click="exportGrid">Export</button>
+          </div>
         </div>
         <h3>{{ status }}</h3>
+      </div>
       </div>
     </div>
     <script type="module">

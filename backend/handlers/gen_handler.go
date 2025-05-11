@@ -41,7 +41,12 @@ func GenHandler(w http.ResponseWriter, r *http.Request) {
     rand := rand.New(rand.NewPCG(uint64(time.Now().UnixNano()), uint64(time.Now().UnixNano())))
 
     log.Info("generating grid with ", params.Unknowns, " unknowns")
-    grid := sudoku.Generate(rand, params.Unknowns)
+    grid, err := sudoku.Generate(rand, params.Unknowns)
+    if err != nil {
+        log.Error("failed to generate grid: ", err)
+        RequestErrorHandler(w, err)
+        return
+    }
 
 
     w.Header().Set("Content-Type", "application/json")

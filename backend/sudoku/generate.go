@@ -1,10 +1,15 @@
 package sudoku
 
-import "math/rand/v2"
+import (
+	"context"
+	"errors"
+	"math/rand/v2"
+	"time"
+)
 
 
 
-func createFilledGrid(rand *rand.Rand) grid {
+func createFilledGrid(ctx context.Context, rand *rand.Rand) grid {
     var grid grid = make([]uint8, 81)
     var i uint8 = 0
     for i < 81 {
@@ -15,7 +20,11 @@ func createFilledGrid(rand *rand.Rand) grid {
                 continue
             }
             grid[i] = value
-            if len(grid.backtrack(1)) != 0 {
+            solutions := grid.backtrack(ctx, 1)
+            if solutions == nil { // timeout
+                return nil
+            }
+            if len(solutions) != 0 {
                 break
             }
             grid[i] = 0
@@ -25,15 +34,22 @@ func createFilledGrid(rand *rand.Rand) grid {
     return grid
 }
 
-func generate(rand *rand.Rand, unknowns uint8) grid {
-    grid := createFilledGrid(rand)
+func generate(ctx context.Context, rand *rand.Rand, unknowns uint8) grid {
+    grid := createFilledGrid(ctx, rand)
+    if grid == nil {
+        return nil // timeout
+    }
     for i, gridIndex := range rand.Perm(81) {
         if uint8(i) >= unknowns {
             break
         }
         removed := grid[gridIndex]
         grid[gridIndex] = 0
-        if len(grid.backtrack(2)) > 1 {
+        solutions := grid.backtrack(ctx, 2)
+        if solutions == nil {
+            return nil // timeout
+        }
+        if len(solutions) > 1 {
             // more than 1 solution --> put back, go to next index
             grid[gridIndex] = removed
         }
@@ -41,6 +57,12 @@ func generate(rand *rand.Rand, unknowns uint8) grid {
     return grid
 }
 
-func Generate(rand *rand.Rand, unknowns uint8) string {
-    return generate(rand, unknowns).string()
+func Generate(rand *rand.Rand, unknowns uint8) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+    grid := generate(ctx, rand, unknowns)
+    if grid == nil {
+        return "", errors.New("generate timed out")
+    }
+    return grid.string(), nil
 }

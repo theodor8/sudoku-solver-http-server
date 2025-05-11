@@ -134,6 +134,8 @@ h1 {
   font-weight: bold;
   font-weight: bold;
   color: #555;
+  font-weight: bold;
+  color: #555;
 }
 
 .input-group .server-input {
@@ -143,11 +145,36 @@ h1 {
   border-radius: 4px;
   font-size: 1em;
   box-sizing: border-box;
-  h1 {
-    text-align: center;
-    color: #333;
-    margin-left: 30px;
-    /* Add space to the left */
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.import-export-group {
+  margin-top: 10px; /* Add some space above the import/export section */
+}
+
+.import-export-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9em;
+  box-sizing: border-box;
+}
+
+.import-button {
+  padding: 8px 15px; /* Slightly smaller padding for a more compact button */
+  font-size: 0.9em;
+}
+
+.import-export-buttons {
+  display: flex;
+  gap: 10px; /* Space between Import and Export buttons */
+}
+
+.import-export-buttons button {
+  flex: 1; /* Make both buttons share the width equally */
+}
   }
 
   .container {
@@ -156,8 +183,7 @@ h1 {
   }
 
   .cell {
-    font-size: clamp(14px, 5vw, 22px);
-    /* Adjust font size for smaller screens */
+    font-size: clamp(14px, 5vw, 22px); /* Adjust font size for smaller screens */
   }
 
   button {
@@ -171,12 +197,10 @@ h1 {
   }
 
   h1 {
-    font-size: 1.8em;
-    /* Adjust heading size */
+    font-size: 1.8em; /* Adjust heading size */
   }
 
   h3 {
-    font-size: 1em;
-    /* Adjust status message size */
+    font-size: 1em; /* Adjust status message size */
   }
 }
