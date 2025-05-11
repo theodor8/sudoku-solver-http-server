@@ -6,7 +6,7 @@ export default {
     const grid = ref(Array(81).fill(""));
     const status = ref("");
     const generateUnknowns = ref(30);
-    const server = ref("127.0.0.1:8081");
+    const server = ref(`${window.location.hostname}:8081`);
 
     watch(generateUnknowns, (newValue) => {
       generateUnknowns.value = Math.max(0, Math.min(81, newValue));
