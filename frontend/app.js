@@ -1,10 +1,15 @@
-const { ref } = Vue;
+const { ref, watch } = Vue;
 
 
 export default {
   setup() {
     const grid = ref(Array(81).fill(""));
     const status = ref("");
+    const generateUnknowns = ref(30);
+
+    watch(generateUnknowns, (newValue) => {
+      generateUnknowns.value = Math.max(0, Math.min(81, newValue));
+    });
 
     const clear = () => {
       grid.value = Array(81).fill("");
@@ -12,7 +17,10 @@ export default {
     };
 
     const generate = async () => {
-      const response = await fetch('http://localhost:8081/gen', { method: 'GET' });
+      if (generateUnknowns.value === "") {
+        generateUnknowns.value = 30;
+      }
+      const response = await fetch(`http://localhost:8081/gen?unknowns=${generateUnknowns.value}`, { method: 'GET' });
       const data = await response.json();
       grid.value = data.Grid.split("").map(cell => cell === "0" ? "" : cell);
     };
@@ -31,16 +39,38 @@ export default {
       }
     }
 
-    const onInput = (index) => {
-      const value = grid.value[index];
-      if (!/^[1-9]$/.test(value)) {
-        grid.value[index] = "";
+    const onInput = (index, event) => {
+      let value = grid.value[index];
+      // Only keep the last entered digit if multiple are input
+      if (typeof value === "string" && value.length > 1) {
+        value = value.slice(-1);
+        if (/^[1-9]$/.test(value)) {
+          grid.value[index] = value;
+        } else {
+          grid.value[index] = grid.value[index].replace(/[^1-9]/g, "");
+        }
+      }
+      // Arrow key navigation
+      if (event && event.type === "keydown") {
+        let nextIndex = null;
+        if (event.key === "ArrowRight") nextIndex = (index + 1) % 81;
+        else if (event.key === "ArrowLeft") nextIndex = (index - 1 + 81) % 81;
+        else if (event.key === "ArrowDown") nextIndex = (index + 9) % 81;
+        else if (event.key === "ArrowUp") nextIndex = (index - 9 + 81) % 81;
+        if (nextIndex !== null) {
+          event.preventDefault();
+          const nextInput = document.querySelectorAll('.cell')[nextIndex];
+          if (nextInput) nextInput.focus();
+        }
       }
     }
+
 
     return {
       grid,
       status,
+      generateUnknowns,
+
       clear,
       generate,
       solve,

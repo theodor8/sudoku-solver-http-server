@@ -19,16 +19,17 @@ body {
 }
 
 .grid {
+  border: 2px solid #4CAF50;
   display: grid;
   grid-template-columns: repeat(9, 1fr);
   grid-template-rows: repeat(9, 1fr);
 }
 
+
 .cell {
   width: 30px;
   height: 30px;
-  margin: 1px;
-  border: 3px solid #ccc;
+  border: 1px solid #ccc;
   text-align: center;
   font-size: 25px;
   outline: none;
@@ -42,15 +43,6 @@ body {
 .cell:focus {
   border-color: #4CAF50;
   background-color: #e8f5e9;
-}
-
-.cell:nth-child(3n):not(:nth-child(9n)) {
-  border-right: 3px solid #333;
-}
-
-.cell:nth-child(n+19):nth-child(-n+27),
-.cell:nth-child(n+46):nth-child(-n+54) {
-  border-bottom: 3px solid #333;
 }
 
 .buttons {
@@ -72,3 +64,15 @@ button {
 button:hover {
   background-color: #45a049;
 }
+
+.generate-unknowns {
+  width: 30%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-left: 10px;
+  box-sizing: border-box;
+}
+
+

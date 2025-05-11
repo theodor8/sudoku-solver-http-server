@@ -14,18 +14,23 @@
         <div class="grid">
           <input
             class="cell"
-            v-for="cell in 81"
-            :key="cell"
-            v-model="grid[cell - 1]"
-            maxlength="1"
+            v-for="(value, index) in grid"
+            :key="index"
+            v-model="grid[index]"
+            maxlength="2"
             inputmode="numeric"
             pattern="[1-9]"
-            @input="onInput(cell - 1)"
+            @input="onInput(index, $event)"
+            @keydown="onInput(index, $event)"
           >
         </div>
         <div class="buttons">
           <button @click="clear">Clear</button>
-          <button @click="generate">Generate</button>
+          <div style="display: flex; align-items: center; width: 100%;">
+            <button style="flex: 1; width: 100%;" @click="generate">Generate</button>
+            <span style="margin-left: 8px; font-weight: bold; color: #555;">Unknowns:</span>
+            <input class="generate-unknowns" type="number" min="0" max="80" v-model="generateUnknowns">
+          </div>
           <button @click="solve">Solve</button>
         </div>
         <h3>{{ status }}</h3>
