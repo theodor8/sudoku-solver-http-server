@@ -6,7 +6,7 @@ export default {
     const grid = ref(Array(81).fill(""));
     const status = ref("");
     const generateUnknowns = ref(30);
-    const serverUrl = ref("192.168.1.20:8081");
+    const server = ref("127.0.0.1:8081");
 
     watch(generateUnknowns, (newValue) => {
       generateUnknowns.value = Math.max(0, Math.min(81, newValue));
@@ -21,14 +21,14 @@ export default {
       if (generateUnknowns.value === "") {
         generateUnknowns.value = 30;
       }
-      const response = await fetch(`http://${serverUrl.value}/gen?unknowns=${generateUnknowns.value}`, { method: 'GET' });
+      const response = await fetch(`http://${server.value}/gen?unknowns=${generateUnknowns.value}`, { method: 'GET' });
       const data = await response.json();
       grid.value = data.Grid.split("").map(cell => cell === "0" ? "" : cell);
     };
 
     const solve = async () => {
       const gridString = grid.value.map(cell => cell === "" ? "0" : cell).join("");
-      const response = await fetch(`http://${serverUrl.value}/solve?input=${gridString}`, {
+      const response = await fetch(`http://${server.value}/solve?input=${gridString}`, {
         method: 'GET',
       });
       const data = await response.json();
@@ -71,6 +71,7 @@ export default {
       grid,
       status,
       generateUnknowns,
+      server,
 
       clear,
       generate,

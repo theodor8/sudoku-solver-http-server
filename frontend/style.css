@@ -2,20 +2,36 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
+  /* Removed to allow content to start from top */
+  min-height: 100vh;
+  /* Ensure full viewport height */
+  margin: 0;
+  /* Remove default body margin */
+  padding-top: 20px;
+  /* Add some padding at the top */
   background-color: #f0f2f5;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* Modern font stack */
 }
 
 
 .container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
+  /* Increased gap for better spacing */
   background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 25px;
+  /* Increased padding */
+  border-radius: 12px;
+  /* Softer corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  /* Enhanced shadow */
+  width: 90%;
+  /* Responsive width */
+  max-width: 500px;
+  /* Max width for larger screens */
 }
 
 .grid {
@@ -23,17 +39,27 @@ body {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
   grid-template-rows: repeat(9, 1fr);
+  aspect-ratio: 1 / 1;
+  /* Maintain square aspect ratio */
+  width: 100%;
+  /* Make grid responsive */
 }
 
 
 .cell {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #ccc;
+  width: 100%;
+  /* Fill grid cell */
+  height: 100%;
+  /* Fill grid cell */
+  border: 1px solid #ddd;
+  /* Lighter border */
   text-align: center;
-  font-size: 25px;
+  font-size: clamp(16px, 4vw, 25px);
+  /* Responsive font size */
   outline: none;
   transition: border-color 0.3s, background-color 0.3s;
+  box-sizing: border-box;
+  /* Include padding and border in element's total width and height */
 }
 
 .cell:hover {
@@ -48,31 +74,109 @@ body {
 .buttons {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
+  /* Increased gap */
 }
 
 button {
-  padding: 10px 20px;
+  padding: 12px 24px;
+  /* Increased padding */
   background-color: #4CAF50;
   color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
+  /* Softer corners */
   cursor: pointer;
-  font-size: 16px;
+  font-size: 1em;
+  /* Relative font size */
+  transition: background-color 0.3s ease;
+  /* Smooth transition */
 }
 
 button:hover {
   background-color: #45a049;
 }
 
-.generate-unknowns {
-  width: 30%;
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  margin-left: 10px;
-  box-sizing: border-box;
+h1 {
+  color: #333;
+  margin-bottom: 20px; /* Add space below the title */
+  margin-left: 30px; /* Add space to the left */
 }
 
+.generate-unknowns {
+  width: 60px;
+  /* Fixed width for better alignment */
+  padding: 8px 10px;
+  /* Adjusted padding */
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+  /* Relative font size */
+  margin-left: 10px;
+  box-sizing: border-box;
+  text-align: center;
+}
 
+/* Styles for the input container within buttons */
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* Space between button and input/label */
+}
+
+.input-group button {
+  flex-grow: 1;
+  /* Allow button to take available space */
+}
+
+.input-group label {
+  font-weight: bold;
+  font-weight: bold;
+  color: #555;
+}
+
+.input-group .server-input {
+  flex-grow: 1; /* Allow input to take available space */
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+  box-sizing: border-box;
+  h1 {
+    text-align: center;
+    color: #333;
+    margin-left: 30px;
+    /* Add space to the left */
+  }
+
+  .container {
+    padding: 15px;
+    gap: 15px;
+  }
+
+  .cell {
+    font-size: clamp(14px, 5vw, 22px);
+    /* Adjust font size for smaller screens */
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 0.9em;
+  }
+
+  .generate-unknowns {
+    padding: 6px 8px;
+    font-size: 0.9em;
+  }
+
+  h1 {
+    font-size: 1.8em;
+    /* Adjust heading size */
+  }
+
+  h3 {
+    font-size: 1em;
+    /* Adjust status message size */
+  }
+}
